@@ -1,0 +1,42 @@
+{
+    "name": "Save and Return Redirector",
+    "namespace": "UniversityOfWashington\\SaveAndReturnRedirector",
+    "framework-version": 16,
+    "description": "This REDCap module alters the Save & Return button for all surveys in a project and redirects them to a participant portal URL.",
+    "authors": [
+        {
+            "name": "Paul Litwin",
+            "email": "plitwin@uw.edu",
+            "institution": "University of Washington"
+        },
+        {
+            "name": "Andy Martin",
+            "email": "andy123@stanford.edu",
+            "institution": "Stanford University"
+        }
+    ],
+    "project-settings": [
+        {
+            "key": "global_show_redirector_button",
+            "name": "Enabled",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "global_redirector_button_text",
+            "name": "<b>Button text</b> for redirector button",
+            "required": false,
+            "type": "text"
+        },
+        {
+            "key": "global_redirector_button_url",
+            "name": "<b>URL</b> to use for redirector button action",
+            "required": false,
+            "type": "text"
+        }
+    ],
+    "compatibility": {
+        "php-version-min": "5.4.0",
+        "redcap-version-min": "8.7.0"
+    }
+}
