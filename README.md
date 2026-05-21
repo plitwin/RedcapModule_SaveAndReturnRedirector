@@ -10,4 +10,4 @@ This EM has three properties:
 <li><b>URL</b> to use for redirector button action</li>
 </ul>
 
-Thanks go <a href="https://github.com/123andy">Andy Martin</a> who in the back of a session room during REDCap Vancouver in 2019 helped me create an earlier version of this external module.
+Thanks to <a href="https://github.com/123andy">Andy Martin</a>, who in the back of a session room during REDCap Vancouver in 2019, helped me create an earlier version of this external module.
