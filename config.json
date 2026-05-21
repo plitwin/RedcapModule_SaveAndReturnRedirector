@@ -3,6 +3,7 @@
     "namespace": "UniversityOfWashington\\SaveAndReturnRedirector",
     "framework-version": 16,
     "description": "This REDCap module alters the Save & Return button for all surveys in a project and redirects them to a participant portal URL.",
+    "institution": "University of Washington, Center for Studies in Demography and Ecology",
     "authors": [
         {
             "name": "Paul Litwin",
