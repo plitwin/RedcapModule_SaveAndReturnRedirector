@@ -1,111 +1,70 @@
 <?php
-
 namespace UniversityOfWashington\SaveAndReturnRedirector;
 
 use ExternalModules\AbstractExternalModule;
 
 class SaveAndReturnRedirector extends AbstractExternalModule {
 
-    function redcap_save_record(
-        $project_id,
-        $record,
-        $instrument,
-        $event_id,
-        $group_id,
-        $survey_hash,
-        $response_id,
-        $repeat_instance
-    )
-    {
-        // Intentionally left blank.
-        // Redirect handling is now fully client-side to avoid
-        // REDCap EM hook lifecycle termination warnings.
+    public function __construct(){
+        parent::__construct();
     }
 
-    function redcap_survey_complete(
-        $project_id,
-        $record,
-        $instrument,
-        $event_id,
-        $group_id,
-        $survey_hash,
-        $response_id,
-        $repeat_instance
-    )
+    function redcap_save_record($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
     {
-        $redirectUrl = $this->getProjectSetting('global_redirector_button_url');
+        // REDCap::logEvent(__FUNCTION__, "$record - $instrument - $event_id");
 
-        ?>
-        <script type="text/javascript">
-        $(document).ready(function() {
+        // only fire on surveys
+        if (empty($survey_hash)) return;
 
-            const redirectUrl = <?= json_encode($redirectUrl) ?>;
-
-            if (redirectUrl) {
-                setTimeout(function() {
-                    window.location.href = redirectUrl;
-                }, 500);
-            }
-
-        });
-        </script>
-        <?php
+        if (isset($_GET['__return'])) {
+            // This is a save and return
+            $this->redirectToPortal();
+        }
     }
 
-    function redcap_survey_page(
-        $project_id,
-        $record,
-        $instrument,
-        $event_id,
-        $group_id,
-        $survey_hash,
-        $response_id,
-        $repeat_instance
-    )
-    {
-        $addBtn = $this->getProjectSetting('global_show_redirector_button');
+function redirectToPortal() {
+    if (!$this->getProjectSetting('global_show_redirector_button')) return;
 
-        if (!$addBtn) {
+    $url = $this->getProjectSetting('global_redirector_button_url');
+    if (empty($url)) return; // nothing configured, don't redirect to nowhere
+
+    if (headers_sent()) {
+        echo "<script type='text/javascript'>window.location.href=" . json_encode($url) . ";</script>";
+    } else {
+        header('Location: ' . $url, true, 302);
+    }
+    $this->exitAfterHook();
+}
+
+    function redcap_survey_page($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
+    {
+        if (isset($_GET['sq'])) {
+            // on the queue page
+            $this->redirectToPortal();
             return;
         }
 
-        $addBtnText = $this->getProjectSetting('global_redirector_button_text');
-        $redirectUrl = $this->getProjectSetting('global_redirector_button_url');
-
+        $showButton = $this->getProjectSetting('global_show_redirector_button');
         ?>
         <script type="text/javascript">
         $(document).ready(function() {
+            const showButton = <?= json_encode((bool)$showButton) ?>;
+            if (!showButton) return;
 
             const returnBtn = $("[name='submit-btn-savereturnlater']");
-            const buttonText = <?= json_encode($addBtnText) ?>;
-            const redirectUrl = <?= json_encode($redirectUrl) ?>;
+            const buttonText = <?= json_encode($this->getProjectSetting('global_redirector_button_text')) ?>;
 
-            if (returnBtn.length) {
-
-                if (buttonText) {
-                    returnBtn.val(buttonText);
-                    returnBtn.text(buttonText);
-                }
-
-                returnBtn.off('click.redirector');
-
-                returnBtn.on('click.redirector', function(e) {
-
-                    // Allow REDCap's normal save process
-                    // to proceed before redirecting.
-                    setTimeout(function() {
-
-                        if (redirectUrl) {
-                            window.location.href = redirectUrl;
-                        }
-
-                    }, 500);
-
-                });
+            if (returnBtn.length && buttonText) {
+                returnBtn.val(buttonText);
+                returnBtn.text(buttonText);
             }
 
+            if ($("button[name='submit-btn-saverecord']").is(':visible')
+                && $("button[name='submit-btn-saverecord']").text()=='Submit') {
+                $("button[name='submit-btn-savereturnlater']").hide();
+            }
         });
         </script>
-        <?php
+        <?php	
     }
 }
