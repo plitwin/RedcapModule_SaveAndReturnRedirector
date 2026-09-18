@@ -4,11 +4,6 @@ namespace UniversityOfWashington\SaveAndReturnRedirector;
 use ExternalModules\AbstractExternalModule;
 
 class SaveAndReturnRedirector extends AbstractExternalModule {
-
-    public function __construct(){
-        parent::__construct();
-    }
-
     function redcap_save_record($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
     {
         // REDCap::logEvent(__FUNCTION__, "$record - $instrument - $event_id");
